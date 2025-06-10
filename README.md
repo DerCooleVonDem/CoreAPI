@@ -2,8 +2,6 @@
 
 CoreAPI is a utility plugin that provides a set of APIs for PocketMine-MP plugin developers. It aims to simplify common tasks and provide a consistent way to implement features across plugins.
 
-**🎉 Major UX Improvements**: This version includes significant developer experience improvements with better error messages, type-safe APIs, fluent builders, and clearer documentation. See [UX_IMPROVEMENTS.md](UX_IMPROVEMENTS.md) for details.
-
 ## Features
 
 ### Command System
