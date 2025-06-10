@@ -116,7 +116,3 @@ You can unregister commands using the CommandManager:
 // Unregister a command
 $commandManager->unregisterCommand("mycommand");
 ```
-
-## Example
-
-See the `example` directory for a complete example of how to use the command system.
