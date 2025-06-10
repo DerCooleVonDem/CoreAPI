@@ -69,22 +69,6 @@ The Scoreboard API provides a comprehensive system for managing and displaying s
 
 For more information, see the [Scoreboard API Documentation](src/scoreboard/README.md).
 
-### Unit Test API
-
-The Unit Test API provides a comprehensive testing framework specifically designed for PocketMine-MP plugin development. It includes:
-
-- **NEW**: PocketMine-MP specific mock objects (MockPlayer, MockServer, MockPluginManager)
-- **NEW**: Specialized assertions for testing forms, commands, permissions, and player interactions
-- **NEW**: Test suites and runners with detailed reporting
-- **NEW**: Built-in `/test` command for running tests in-game or console
-- **NEW**: 100% API coverage with 80+ comprehensive tests across all systems
-- Test organization with suites and automatic discovery
-- Colorized output with execution times and failure details
-
-**🎯 Complete Test Coverage**: All CoreAPI systems are thoroughly tested with unit tests, integration tests, and performance tests. See [Test Documentation](tests/README.md) for details.
-
-For more information, see the [Unit Test API Documentation](src/test/README.md).
-
 ### Examples
 
 The plugin includes examples of how to use the APIs, including demonstrations of the new improved APIs.
