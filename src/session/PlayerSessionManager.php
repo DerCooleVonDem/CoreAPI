@@ -17,8 +17,8 @@ use pocketmine\Server;
  * Creates sessions when players join and removes them when they leave
  */
 class PlayerSessionManager extends BaseManager implements Listener {
-    /** @var PlayerSessionComponent[] */
-    private array $componentTypes = [];
+    /** @var ComponentFactory[] */
+    private array $componentFactories = [];
     
     /**
      * PlayerSessionManager constructor
@@ -33,24 +33,37 @@ class PlayerSessionManager extends BaseManager implements Listener {
     }
     
     /**
-     * Register a component type that will be added to all new sessions
-     * 
-     * @param PlayerSessionComponent $component The component to register
+     * Register a component factory that will be used to create components for all sessions
+     *
+     * @param ComponentFactory $factory The component factory to register
      */
-    public function registerComponent(PlayerSessionComponent $component): void {
-        $this->componentTypes[$component->getId()] = $component;
-        
-        // Register the component as an event listener
-        $this->plugin->getServer()->getPluginManager()->registerEvents($component, $this->plugin);
-        
+    public function registerComponentFactory(ComponentFactory $factory): void {
+        $this->componentFactories[$factory->getId()] = $factory;
+
         // Add the component to all existing sessions
         foreach ($this->items as $session) {
             if ($session instanceof PlayerSession) {
-                // Create a clone of the component for each session
-                $componentClone = clone $component;
-                $session->addComponent($componentClone);
+                $component = $factory->create();
+                $session->addComponent($component);
+
+                // Register the component as an event listener
+                $this->plugin->getServer()->getPluginManager()->registerEvents($component, $this->plugin);
             }
         }
+    }
+
+    /**
+     * Register a component type that will be added to all new sessions
+     * This method creates a factory automatically for backward compatibility
+     *
+     * @param PlayerSessionComponent $component The component to register
+     * @deprecated Use registerComponentFactory() instead
+     */
+    public function registerComponent(PlayerSessionComponent $component): void {
+        $factory = SimpleComponentFactory::createFactory($component->getId(), function() use ($component) {
+            return clone $component;
+        });
+        $this->registerComponentFactory($factory);
     }
     
     /**
@@ -79,10 +92,12 @@ class PlayerSessionManager extends BaseManager implements Listener {
         $this->addItem($session);
         
         // Add all registered component types to the session
-        foreach ($this->componentTypes as $component) {
-            // Create a clone of the component for each session
-            $componentClone = clone $component;
-            $session->addComponent($componentClone);
+        foreach ($this->componentFactories as $factory) {
+            $component = $factory->create();
+            $session->addComponent($component);
+
+            // Register the component as an event listener
+            $this->plugin->getServer()->getPluginManager()->registerEvents($component, $this->plugin);
         }
         
         return $session;

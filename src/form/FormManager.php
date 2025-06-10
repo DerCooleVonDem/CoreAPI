@@ -24,43 +24,57 @@ class FormManager {
 
     /**
      * Create a new form with the specified type
-     * 
+     *
      * @param FormType $formType The type of form to create
      * @param callable|null $callable Callback function to be called when the form is submitted
      * @return Form The created form
+     * @deprecated Use createModalForm(), createSimpleForm(), or createCustomForm() instead
      */
     public function createForm(FormType $formType, ?callable $callable = null): Form {
         return new Form($formType, $callable);
     }
 
     /**
-     * Create a new modal form
-     * 
-     * @param callable|null $callable Callback function to be called when the form is submitted
-     * @return Form The created form
+     * Create a modal form
+     *
+     * @param string $title The form title
+     * @param string $content The form content
+     * @param string $button1Text The first button text (returns true)
+     * @param string $button2Text The second button text (returns false)
+     * @param callable|null $callable Callback function (Player $player, bool $response): void
+     * @return ModalForm The created modal form
      */
-    public function createModalForm(?callable $callable = null): Form {
-        return $this->createForm(FormType::MODAL, $callable);
+    public function createModalForm(
+        string $title = "",
+        string $content = "",
+        string $button1Text = "Yes",
+        string $button2Text = "No",
+        ?callable $callable = null
+    ): ModalForm {
+        return new ModalForm($title, $content, $button1Text, $button2Text, $callable);
     }
 
     /**
-     * Create a new simple form
-     * 
-     * @param callable|null $callable Callback function to be called when the form is submitted
-     * @return Form The created form
+     * Create a simple form
+     *
+     * @param string $title The form title
+     * @param string $content The form content
+     * @param callable|null $callable Callback function (Player $player, ?int $buttonIndex): void
+     * @return SimpleForm The created simple form
      */
-    public function createSimpleForm(?callable $callable = null): Form {
-        return $this->createForm(FormType::SIMPLE, $callable);
+    public function createSimpleForm(string $title = "", string $content = "", ?callable $callable = null): SimpleForm {
+        return new SimpleForm($title, $content, $callable);
     }
 
     /**
-     * Create a new custom form
-     * 
-     * @param callable|null $callable Callback function to be called when the form is submitted
-     * @return Form The created form
+     * Create a custom form
+     *
+     * @param string $title The form title
+     * @param callable|null $callable Callback function (Player $player, ?array $response): void
+     * @return CustomForm The created custom form
      */
-    public function createCustomForm(?callable $callable = null): Form {
-        return $this->createForm(FormType::CUSTOM, $callable);
+    public function createCustomForm(string $title = "", ?callable $callable = null): CustomForm {
+        return new CustomForm($title, $callable);
     }
 
     /**

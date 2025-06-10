@@ -2,11 +2,61 @@
 
 This directory contains the command system for the CoreAPI plugin. It provides a simple and flexible way to create commands with subcommands.
 
-## Usage
+**🎉 NEW**: Fluent builders for easier command creation with better error messages and automatic registration!
 
-### Creating a Command
+## Quick Start (Recommended - New Fluent API)
 
-To create a command, extend the `BaseCommand` class:
+### Creating Commands with CommandBuilder
+
+The easiest way to create commands is using the new fluent `CommandBuilder`:
+
+```php
+use JonasWindmann\CoreAPI\command\CommandBuilder;
+use JonasWindmann\CoreAPI\command\SubCommandBuilder;
+
+CommandBuilder::create("mycommand")
+    ->description("My awesome command")
+    ->aliases("mc", "mycmd")
+    ->permission("mycommand.use")
+    ->subCommands(
+        SubCommandBuilder::create("hello")
+            ->description("Say hello to a player")
+            ->usage("/mycommand hello [player]")
+            ->args(0, 1) // min 0, max 1 arguments
+            ->executes(function($sender, $args) {
+                if (empty($args)) {
+                    $sender->sendMessage("Hello, " . $sender->getName() . "!");
+                } else {
+                    $sender->sendMessage("Hello, " . $args[0] . "!");
+                }
+            })
+            ->build(),
+
+        SubCommandBuilder::create("info")
+            ->description("Show information")
+            ->permission("mycommand.info")
+            ->exactArgs(0) // exactly 0 arguments
+            ->executes(function($sender, $args) {
+                $sender->sendMessage("This is my command!");
+            })
+            ->build()
+    )
+    ->build(); // Automatically registered with CoreAPI!
+```
+
+### Benefits of the New API
+
+- **Automatic Registration**: No need to manually register commands
+- **Better Error Messages**: Users get helpful suggestions when they make mistakes
+- **Fluent Interface**: Easy to read and write
+- **Type Safety**: Less prone to errors
+- **Sensible Defaults**: Less boilerplate code
+
+## Advanced Usage (Traditional API)
+
+### Creating a Command (Traditional Way)
+
+To create a command using the traditional approach, extend the `BaseCommand` class:
 
 ```php
 use JonasWindmann\CoreAPI\command\BaseCommand;
@@ -116,3 +166,33 @@ You can unregister commands using the CommandManager:
 // Unregister a command
 $commandManager->unregisterCommand("mycommand");
 ```
+
+## Built-in CoreAPI Commands
+
+CoreAPI includes several built-in commands for managing its features:
+
+### Scoreboard Commands
+
+- **`/coresb` (aliases: `/csb`, `/scoreboard`)** - Main scoreboard management command
+  - `/coresb list` - List all available scoreboards with details
+  - `/coresb show <id>` - Display a specific scoreboard
+  - `/coresb hide` - Hide your current scoreboard
+  - `/coresb manage` - Open form-based management interface
+  - `/coresb info [id]` - Show detailed information about a scoreboard
+
+### Test Commands (Debug)
+
+- **`/testscoreboard`** - Debug command for testing scoreboard functionality
+  - Manually trigger scoreboard updates
+  - View current scoreboard status
+  - Debug auto-update functionality
+
+### Permissions
+
+- `coreapi.scoreboard.use` - Basic scoreboard usage
+- `coreapi.scoreboard.list` - List scoreboards
+- `coreapi.scoreboard.show` - Display scoreboards
+- `coreapi.scoreboard.hide` - Hide scoreboards
+- `coreapi.scoreboard.manage` - Access form management
+- `coreapi.scoreboard.info` - View scoreboard information
+- `coreapi.admin` - Administrative commands (test commands)

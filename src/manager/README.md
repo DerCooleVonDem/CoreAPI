@@ -2,14 +2,67 @@
 
 This directory contains the manager system for the CoreAPI plugin. It provides a simple and flexible way to create managers for collections of objects.
 
+**🎉 NEW**: Generic `TypedManager<T>` for type-safe manager implementations and optional persistence methods!
+
 ## Overview
 
-The manager system consists of two main components:
+The manager system consists of several components:
 
 1. **Manageable Interface**: An interface that objects must implement to be managed by a manager.
-2. **BaseManager Class**: An abstract class that provides common functionality for managers.
+2. **BaseManager Class**: A class that provides common functionality for managers with optional persistence.
+3. **NEW**: **TypedManager<T> Class**: A generic type-safe manager for better type checking.
 
-## Usage
+## Quick Start (Recommended - New TypedManager)
+
+### Creating a Type-Safe Manager
+
+The new `TypedManager<T>` provides type safety and optional persistence:
+
+```php
+use JonasWindmann\CoreAPI\manager\TypedManager;
+use pocketmine\plugin\Plugin;
+
+/**
+ * @extends TypedManager<MyItem>
+ */
+class MyItemManager extends TypedManager {
+
+    public function __construct(Plugin $plugin) {
+        parent::__construct($plugin);
+        // loadItems() is optional - only implement if you need persistence
+    }
+
+    // Optional: Override only if you need persistence
+    public function loadItems(): void {
+        // Load items from storage if needed
+    }
+
+    // Optional: Override only if you need persistence
+    public function saveItems(): void {
+        // Save items to storage if needed
+    }
+
+    // Type-safe methods with proper return types
+    public function createItem(string $id, string $name): ?MyItem {
+        if ($this->hasItem($id)) {
+            return null;
+        }
+
+        $item = new MyItem($id, $name);
+        $this->addItem($item);
+        return $item; // Returns MyItem, not Manageable
+    }
+}
+```
+
+### Benefits of TypedManager
+
+- **Type Safety**: Methods return specific types, not generic `Manageable`
+- **Optional Persistence**: No need to implement empty `loadItems()`/`saveItems()` methods
+- **Better IDE Support**: Autocomplete works with specific types
+- **Additional Utilities**: Built-in `filter()`, `find()`, `count()`, etc.
+
+## Traditional Usage
 
 ### Creating a Manageable Object
 

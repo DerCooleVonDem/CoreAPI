@@ -6,4 +6,9 @@ api: 5.28.0
 src-namespace-prefix: JonasWindmann\CoreAPI
 description: A utility plugin that provides a set of APIs for PocketMine-MP plugin developers
 website: https://github.com/JonasWindmann/CoreAPI
+permissions:
+  coreapi.admin:
+    default: op
+  coreapi.scoreboard.use:
+    default: op
 ...

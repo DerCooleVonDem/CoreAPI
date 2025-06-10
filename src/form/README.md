@@ -4,6 +4,8 @@
 
 The CoreAPI Form API provides a powerful, flexible, and user-friendly way to create and manage forms in PocketMine-MP plugins. Forms are graphical user interfaces that allow players to interact with your plugin through buttons, input fields, toggles, and other UI elements.
 
+**🎉 NEW**: Type-safe form classes (`ModalForm`, `SimpleForm`, `CustomForm`) with better error handling and clearer APIs!
+
 This API simplifies the process of creating forms, handling responses, and implementing navigation between different forms, allowing you to focus on your plugin's functionality rather than UI implementation details.
 
 ## Table of Contents
@@ -33,7 +35,10 @@ This API simplifies the process of creating forms, handling responses, and imple
 
 ## Key Features
 
-- **Unified API**: Create any type of form (modal, simple, or custom) using a consistent API
+- **NEW**: Type-safe form classes (`ModalForm`, `SimpleForm`, `CustomForm`) prevent runtime errors
+- **NEW**: Clear image handling with `ImageType` enum instead of magic numbers
+- **NEW**: Button-specific callbacks for better organization
+- **Unified API**: Create any type of form using a consistent API
 - **Type Safety**: Automatic validation of form responses with appropriate error handling
 - **Fluent Interface**: Method chaining for concise and readable code
 - **Form Navigation**: Built-in support for navigating between forms with back buttons
@@ -64,9 +69,58 @@ The Form API supports three types of forms:
 
 ## Creating Forms
 
-### Using FormType
+### Quick Start (Recommended - New Type-Safe API)
 
-You can create forms directly using the Form class with a FormType parameter:
+The easiest and safest way to create forms is using the new type-safe form classes:
+
+```php
+use JonasWindmann\CoreAPI\form\ModalForm;
+use JonasWindmann\CoreAPI\form\SimpleForm;
+use JonasWindmann\CoreAPI\form\CustomForm;
+use JonasWindmann\CoreAPI\form\ImageType;
+
+// Type-safe modal form
+$modal = new ModalForm("Confirm Action", "Are you sure?", "Yes", "No",
+    function($player, $response) {
+        $player->sendMessage($response ? "Confirmed!" : "Cancelled");
+    });
+$modal->sendTo($player);
+
+// Type-safe simple form with clear image handling
+$simple = new SimpleForm("Main Menu", "Choose an option:")
+    ->buttonWithImage("Teleport", "textures/ui/teleport.png")
+    ->buttonWithUrl("Website", "https://example.com/icon.png")
+    ->button("Settings", null, function($player) {
+        $player->sendMessage("Opening settings...");
+    })
+    ->closeButton();
+$simple->sendTo($player);
+
+// Type-safe custom form with key mapping
+$custom = new CustomForm("Profile", function($player, $response) {
+    if ($response === null) return; // Form cancelled
+
+    // Response is properly mapped with keys!
+    $name = $response["name"];
+    $age = $response["age"];
+    $player->sendMessage("Hello $name, age $age!");
+})
+    ->input("Name:", "Enter your name", "", "name")
+    ->slider("Age:", 1, 100, 1, 25, "age")
+    ->toggle("Notifications", true, "notifications");
+$custom->sendTo($player);
+```
+
+### Benefits of Type-Safe Forms
+
+- **Compile-time Safety**: No more runtime exceptions for calling wrong methods
+- **Clear Image Handling**: Use `ImageType::PATH` and `ImageType::URL` instead of magic numbers
+- **Better Callbacks**: Button-specific callbacks instead of complex index handling
+- **Key Mapping**: Custom forms return associative arrays with meaningful keys
+
+### Traditional API (Using FormType)
+
+You can still create forms using the traditional Form class with a FormType parameter:
 
 ```php
 use JonasWindmann\CoreAPI\form\Form;
@@ -442,3 +496,35 @@ $form = $formManager->createCustomForm(function(Player $player, ?array $data) {
 9. **Handle Errors Gracefully**: Catch and handle exceptions that might occur during form processing.
 
 10. **Test on Different Devices**: Forms may display differently on different devices, so test on various screen sizes.
+
+## Built-in CoreAPI Forms
+
+CoreAPI includes several built-in forms for managing its features:
+
+### Scoreboard Management Forms
+
+CoreAPI provides a comprehensive form-based interface for managing scoreboards:
+
+- **ScoreboardManagementForm** - Main menu for scoreboard management
+- **ScoreboardListForm** - Browse all available scoreboards
+- **ScoreboardSelectionForm** - Quick selection interface for displaying scoreboards
+- **ScoreboardDetailForm** - Detailed information about a specific scoreboard
+- **ScoreboardStatusForm** - Shows player's current scoreboard status
+- **ScoreboardContentForm** - Displays lines and tags of a scoreboard
+
+Access these forms through the `/coresb manage` command or programmatically:
+
+```php
+use JonasWindmann\CoreAPI\scoreboard\form\ScoreboardManagementForm;
+
+// Open the main scoreboard management form
+$form = new ScoreboardManagementForm();
+$form->sendTo($player);
+```
+
+These forms demonstrate best practices for:
+- Navigation between forms with back buttons
+- Displaying complex information in user-friendly formats
+- Providing multiple action options per form
+- Handling player state and session data
+- Using consistent styling and messaging

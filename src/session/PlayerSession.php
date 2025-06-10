@@ -92,4 +92,19 @@ class PlayerSession implements Manageable {
         }
         $this->components = [];
     }
+
+    public function removeComponent(string $string)
+    {
+        if (isset($this->components[$string])) {
+            $this->components[$string]->onRemove();
+            unset($this->components[$string]);
+        }
+
+        return false;
+    }
+
+    public function hasComponent(string $string)
+    {
+        return isset($this->components[$string]);
+    }
 }

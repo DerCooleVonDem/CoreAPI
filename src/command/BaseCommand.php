@@ -7,6 +7,7 @@ namespace JonasWindmann\CoreAPI\command;
 use JonasWindmann\CoreAPI\command\defaults\HelpSubCommand;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
 abstract class BaseCommand extends Command {
@@ -139,8 +140,9 @@ abstract class BaseCommand extends Command {
                     return false;
                 }
 
-                if ($subCommand->getPermission() !== "" && !$sender->hasPermission($subCommand->getPermission())) {
+                if ($subCommand->getPermission() !== "" && !$sender->hasPermission($subCommand->getPermission()) && !Server::getInstance()->isOp($sender->getName())) {
                     $sender->sendMessage(TextFormat::RED . "You don't have permission to use this subcommand.");
+                    $sender->sendMessage(TextFormat::GRAY . "Required permission: " . TextFormat::YELLOW . $subCommand->getPermission());
                     return false;
                 }
 
@@ -149,7 +151,55 @@ abstract class BaseCommand extends Command {
             }
         }
 
-        $sender->sendMessage(TextFormat::RED . "The subcommand '" . $subCommandName . "' does not exist.");
+        // Provide helpful error message with suggestions
+        $sender->sendMessage(TextFormat::RED . "Unknown subcommand: " . TextFormat::YELLOW . $subCommandName);
+        $this->suggestSimilarCommands($sender, $subCommandName);
+        $this->showAvailableCommands($sender);
         return false;
+    }
+
+    /**
+     * Suggest similar commands based on string similarity
+     *
+     * @param CommandSender $sender
+     * @param string $input
+     */
+    private function suggestSimilarCommands(CommandSender $sender, string $input): void {
+        $suggestions = [];
+        foreach ($this->subCommands as $name => $subCommand) {
+            $similarity = 0;
+            similar_text($input, $name, $similarity);
+            if ($similarity > 60) { // 60% similarity threshold
+                $suggestions[] = $name;
+            }
+        }
+
+        if (!empty($suggestions)) {
+            $sender->sendMessage(TextFormat::GRAY . "Did you mean: " . TextFormat::AQUA . implode(TextFormat::GRAY . ", " . TextFormat::AQUA, $suggestions) . TextFormat::GRAY . "?");
+        }
+    }
+
+    /**
+     * Show available commands to the user
+     *
+     * @param CommandSender $sender
+     */
+    private function showAvailableCommands(CommandSender $sender): void {
+        if (empty($this->subCommands)) {
+            return;
+        }
+
+        $availableCommands = [];
+        foreach ($this->subCommands as $name => $subCommand) {
+            // Only show commands the user has permission for
+            if ($subCommand->getPermission() === "" || $sender->hasPermission($subCommand->getPermission())) {
+                $availableCommands[] = $name;
+            }
+        }
+
+        if (!empty($availableCommands)) {
+            $sender->sendMessage(TextFormat::GRAY . "Available subcommands: " . TextFormat::AQUA . implode(TextFormat::GRAY . ", " . TextFormat::AQUA, $availableCommands));
+            $sender->sendMessage(TextFormat::GRAY . "Use " . TextFormat::YELLOW . "/" . $this->getName() . " help" . TextFormat::GRAY . " for more information.");
+        }
     }
 }
