@@ -69,13 +69,6 @@ The Scoreboard API provides a comprehensive system for managing and displaying s
 
 For more information, see the [Scoreboard API Documentation](src/scoreboard/README.md).
 
-### Examples
-
-The plugin includes examples of how to use the APIs, including demonstrations of the new improved APIs.
-
-- [Improved API Usage Examples](examples/ImprovedAPIUsage.php) - Shows the new fluent builders and type-safe forms
-- [UX Improvements Documentation](UX_IMPROVEMENTS.md) - Detailed explanation of all improvements
-
 ## Installation
 
 1. Download the latest release from the [Releases](https://github.com/JonasWindmann/CoreAPI/releases) page
