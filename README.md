@@ -69,6 +69,21 @@ The Scoreboard API provides a comprehensive system for managing and displaying s
 
 For more information, see the [Scoreboard API Documentation](src/scoreboard/README.md).
 
+### Custom Item System
+
+The Custom Item System provides a comprehensive solution for creating and managing custom items with NBT data and metadata. It includes:
+
+- **NEW**: Complete custom item creation with NBT data support
+- **NEW**: Registry system with persistent storage and validation
+- **NEW**: Command interface for CLI management (/customitem)
+- **NEW**: Import/export functionality for sharing configurations
+- Type-safe custom item management following CoreAPI patterns
+- Namespace support to avoid conflicts between plugins
+- Player interaction methods (give items, check items)
+- Category-based organization and filtering
+
+For more information, see the [Custom Item System Documentation](src/item/README.md).
+
 ## Installation
 
 1. Download the latest release from the [Releases](https://github.com/JonasWindmann/CoreAPI/releases) page
@@ -164,6 +179,42 @@ $scoreboard->setPriority(100); // High priority = shows by default
 CoreAPI::getInstance()->getScoreboardManager()->registerScoreboard($scoreboard);
 
 // Players can manage scoreboards with: /coresb manage
+```
+
+### Custom Items (New System)
+
+```php
+use JonasWindmann\CoreAPI\CoreAPI;
+use pocketmine\item\VanillaItems;
+
+$customItemManager = CoreAPI::getInstance()->getCustomItemManager();
+
+// Create and register a custom item
+$customItem = $customItemManager->createAndRegisterCustomItem(
+    "magic_sword",           // Unique ID
+    "§cMagic Sword",        // Display name
+    "weapon",               // Category
+    VanillaItems::IRON_SWORD(), // Base item
+    [                       // Custom NBT data
+        "damage" => "15",
+        "element" => "fire"
+    ],
+    [                       // Lore
+        "§7A powerful magical weapon",
+        "§7Deals extra fire damage"
+    ]
+);
+
+// Give to player
+$customItemManager->giveCustomItem($player, "magic_sword", 1);
+
+// Check if item is custom
+if ($customItemManager->isCustomItem($item)) {
+    $customId = $customItemManager->getCustomItemId($item);
+    $damage = $customItemManager->getCustomData($item, "damage");
+}
+
+// Command interface: /customitem create magic_wand "§bMagic Wand" tool minecraft:stick
 ```
 
 ## License
