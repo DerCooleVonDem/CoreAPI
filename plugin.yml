@@ -11,4 +11,20 @@ permissions:
     default: op
   coreapi.scoreboard.use:
     default: op
+  coreapi.customitem.use:
+    default: op
+  coreapi.customitem.create:
+    default: op
+  coreapi.customitem.give:
+    default: op
+  coreapi.customitem.list:
+    default: op
+  coreapi.customitem.remove:
+    default: op
+  coreapi.customitem.info:
+    default: op
+  coreapi.customitem.export:
+    default: op
+  coreapi.customitem.import:
+    default: op
 ...

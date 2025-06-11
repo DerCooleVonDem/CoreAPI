@@ -1,0 +1,60 @@
+# CoreAPI Custom Items Configuration
+# This file contains settings for the custom item system
+
+custom_items:
+  # Maximum number of custom item types that can be registered
+  max_types: 100
+  
+  # Whether to allow multiple custom items with the same display name
+  allow_duplicate_names: false
+  
+  # Default values for new custom items
+  defaults:
+    # Default base item when none is specified
+    base_item: "minecraft:stick"
+    
+    # Default lore lines for new custom items
+    lore:
+      - "§7Custom Item"
+      - "§8Created with CoreAPI"
+
+# Example custom items (these will be loaded automatically)
+# You can add your own custom items here
+examples:
+  enabled: false
+  items:
+    - id: "example_sword"
+      name: "§cFlaming Sword"
+      type: "weapon"
+      base_item: "minecraft:iron_sword"
+      custom_data:
+        damage: "10"
+        element: "fire"
+      lore:
+        - "§7A powerful sword"
+        - "§7Deals extra fire damage"
+        - "§8Example Item"
+    
+    - id: "example_tool"
+      name: "§bMagic Pickaxe"
+      type: "tool"
+      base_item: "minecraft:diamond_pickaxe"
+      custom_data:
+        efficiency: "5"
+        auto_smelt: "true"
+      lore:
+        - "§7An enchanted pickaxe"
+        - "§7Automatically smelts ores"
+        - "§8Example Item"
+    
+    - id: "example_consumable"
+      name: "§aHealing Potion"
+      type: "consumable"
+      base_item: "minecraft:potion"
+      custom_data:
+        heal_amount: "20"
+        instant: "true"
+      lore:
+        - "§7Restores health instantly"
+        - "§7Right-click to use"
+        - "§8Example Item"

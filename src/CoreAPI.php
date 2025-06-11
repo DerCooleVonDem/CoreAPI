@@ -6,6 +6,8 @@ namespace JonasWindmann\CoreAPI;
 
 use JonasWindmann\CoreAPI\command\CommandManager;
 use JonasWindmann\CoreAPI\form\FormManager;
+use JonasWindmann\CoreAPI\item\CustomItemManager;
+use JonasWindmann\CoreAPI\item\command\CustomItemCommand;
 use JonasWindmann\CoreAPI\scoreboard\ScoreboardManager;
 use JonasWindmann\CoreAPI\scoreboard\command\TestScoreboardCommand;
 use JonasWindmann\CoreAPI\scoreboard\command\CoreScoreboardCommand;
@@ -32,6 +34,9 @@ class CoreAPI extends PluginBase
     /** @var ScoreboardManager */
     private ScoreboardManager $scoreboardManager;
 
+    /** @var CustomItemManager */
+    private CustomItemManager $customItemManager;
+
     protected function onEnable(): void
     {
         self::setInstance($this);
@@ -39,6 +44,7 @@ class CoreAPI extends PluginBase
         $this->sessionManager = new PlayerSessionManager($this);
         $this->formManager = new FormManager($this);
         $this->scoreboardManager = new ScoreboardManager($this);
+        $this->customItemManager = new CustomItemManager($this);
 
         // Register the scoreboard component factory
         $this->sessionManager->registerComponentFactory(
@@ -49,6 +55,9 @@ class CoreAPI extends PluginBase
 
         // Register scoreboard commands
         $this->commandManager->registerCommand(new CoreScoreboardCommand());
+
+        // Register custom item commands
+        $this->commandManager->registerCommand(new CustomItemCommand());
     }
 
     /**
@@ -89,5 +98,15 @@ class CoreAPI extends PluginBase
     public function getScoreboardManager(): ScoreboardManager
     {
         return $this->scoreboardManager;
+    }
+
+    /**
+     * Get the custom item manager
+     *
+     * @return CustomItemManager
+     */
+    public function getCustomItemManager(): CustomItemManager
+    {
+        return $this->customItemManager;
     }
 }
