@@ -241,7 +241,7 @@ Automatically managed file storing all registered custom items.
 - `isCustomItem()` - Check if Item is custom
 - `getCustomItemId()` - Extract ID from Item
 - `getCustomItemType()` - Extract type from Item
-- `getCustomData()` - Extract custom data from Item
+- `getCustomDataFromItem()` - Extract custom data from Item
 
 ## Permissions
 

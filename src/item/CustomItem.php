@@ -224,14 +224,14 @@ class CustomItem implements Manageable
     }
 
     /**
-     * Get custom data from an item
-     * 
+     * Get custom data from an item's NBT
+     *
      * @param Item $item
      * @param string $key
      * @param string $namespace
      * @return mixed
      */
-    public static function getCustomData(Item $item, string $key, string $namespace = "CoreAPI"): mixed
+    public static function getCustomDataFromItem(Item $item, string $key, string $namespace = "CoreAPI"): mixed
     {
         $nbt = $item->getNamedTag();
         $dataTag = $nbt->getCompoundTag($namespace . "_data");

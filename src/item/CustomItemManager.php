@@ -292,14 +292,14 @@ class CustomItemManager extends BaseManager
 
     /**
      * Get custom data from an item
-     * 
+     *
      * @param Item $item
      * @param string $key
      * @return mixed
      */
     public function getCustomData(Item $item, string $key): mixed
     {
-        return CustomItem::getCustomData($item, $key, $this->namespace);
+        return CustomItem::getCustomDataFromItem($item, $key, $this->namespace);
     }
 
     /**
