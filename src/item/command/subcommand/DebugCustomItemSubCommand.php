@@ -83,7 +83,7 @@ class DebugCustomItemSubCommand extends SubCommand
         if (!empty($stats['registry_stats']['types_by_category'])) {
             $sender->sendMessage("  §7Types by Category:");
             foreach ($stats['registry_stats']['types_by_category'] as $type => $count) {
-                $sender->sendMessage("    §7- §e$type§7: §f$count");
+                $sender->sendMessage("    §7- §e$type.§7: §f$count");
             }
         }
         
@@ -94,7 +94,7 @@ class DebugCustomItemSubCommand extends SubCommand
                 if (is_array($itemData) && isset($itemData['id'])) {
                     $isRegistered = $customItemManager->getCustomItem($itemData['id']) !== null;
                     $status = $isRegistered ? "§aREGISTERED" : "§cNOT REGISTERED";
-                    $sender->sendMessage("  §7- §e{$itemData['id']} §7($status§7)");
+                    $sender->sendMessage("  §7- §e{$itemData['id']} §7( $status §7)");
                 }
             }
         }
