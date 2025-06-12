@@ -21,7 +21,7 @@ custom_items:
 # Example custom items (these will be loaded automatically)
 # You can add your own custom items here
 examples:
-  enabled: false
+  enabled: true
   items:
     - id: "example_sword"
       name: "§cFlaming Sword"

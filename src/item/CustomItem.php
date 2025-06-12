@@ -254,7 +254,7 @@ class CustomItem implements Manageable
             'id' => $this->id,
             'name' => $this->name,
             'type' => $this->type,
-            'base_item' => $this->baseItem->getName(),
+            'base_item' => $this->baseItem->getVanillaName(),
             'custom_data' => $this->customData,
             'lore' => $this->lore,
             'namespace' => $this->namespace

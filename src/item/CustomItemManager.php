@@ -56,11 +56,14 @@ class CustomItemManager extends BaseManager
     {
         $this->registry->loadRegisteredTypes();
         $registeredItems = $this->registry->getAllTypes();
-        
+
         $this->items = [];
         foreach ($registeredItems as $customItem) {
             $this->items[$customItem->getId()] = $customItem;
         }
+
+        // Load example items if enabled
+        $this->loadExampleItems();
 
         $this->plugin->getLogger()->info("Loaded " . count($this->items) . " custom items.");
     }
@@ -71,6 +74,88 @@ class CustomItemManager extends BaseManager
     public function saveItems(): void
     {
         $this->registry->saveRegisteredTypes();
+    }
+
+    /**
+     * Load example items from configuration if enabled
+     */
+    private function loadExampleItems(): void
+    {
+        if (!$this->config->getNested("examples.enabled", false)) {
+            $this->plugin->getLogger()->debug("Example items are disabled in configuration");
+            return;
+        }
+
+        $exampleItems = $this->config->getNested("examples.items", []);
+        if (empty($exampleItems)) {
+            $this->plugin->getLogger()->warning("No example items found in configuration");
+            return;
+        }
+
+        $this->plugin->getLogger()->info("Loading " . count($exampleItems) . " example items...");
+        $loadedCount = 0;
+        $skippedCount = 0;
+        $errorCount = 0;
+
+        foreach ($exampleItems as $index => $itemData) {
+            if (!is_array($itemData)) {
+                $this->plugin->getLogger()->warning("Example item at index $index is not an array");
+                $errorCount++;
+                continue;
+            }
+
+            // Validate required fields
+            if (!isset($itemData['id'], $itemData['name'], $itemData['type'], $itemData['base_item'])) {
+                $this->plugin->getLogger()->warning("Example item at index $index is missing required fields: " . json_encode($itemData));
+                $errorCount++;
+                continue;
+            }
+
+            // Ensure namespace is set for CoreAPI
+            $itemData['namespace'] = $this->namespace;
+
+            $this->plugin->getLogger()->debug("Processing example item: " . json_encode($itemData));
+
+            $customItem = CustomItem::fromArray($itemData);
+            if ($customItem === null) {
+                $this->plugin->getLogger()->warning("Failed to create example item from data: " . json_encode($itemData));
+                $errorCount++;
+                continue;
+            }
+
+            // Check if item already exists (don't overwrite existing items)
+            if ($this->getCustomItem($customItem->getId()) !== null) {
+                $this->plugin->getLogger()->debug("Example item '{$customItem->getId()}' already exists, skipping");
+                $skippedCount++;
+                continue;
+            }
+
+            // Try to register the item
+            try {
+                if ($this->registerCustomItem($customItem)) {
+                    $this->plugin->getLogger()->debug("Successfully registered example item: " . $customItem->getId());
+                    $loadedCount++;
+                } else {
+                    $this->plugin->getLogger()->warning("Failed to register example item: " . $customItem->getId() . " (registration returned false)");
+                    $errorCount++;
+                }
+            } catch (\Exception $e) {
+                $this->plugin->getLogger()->warning("Exception while registering example item " . $customItem->getId() . ": " . $e->getMessage());
+                $errorCount++;
+            }
+        }
+
+        // Log summary
+        $totalProcessed = $loadedCount + $skippedCount + $errorCount;
+        $this->plugin->getLogger()->info("Example items summary: $loadedCount loaded, $skippedCount skipped, $errorCount errors (total: $totalProcessed)");
+
+        if ($loadedCount > 0) {
+            $this->plugin->getLogger()->info("Successfully loaded $loadedCount example custom items.");
+        } elseif ($errorCount > 0) {
+            $this->plugin->getLogger()->warning("No example items were successfully loaded due to errors.");
+        } elseif ($skippedCount > 0) {
+            $this->plugin->getLogger()->info("All example items were skipped (already exist).");
+        }
     }
 
     /**

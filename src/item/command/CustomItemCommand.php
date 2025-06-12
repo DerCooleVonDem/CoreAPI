@@ -12,6 +12,7 @@ use JonasWindmann\CoreAPI\item\command\subcommand\RemoveCustomItemSubCommand;
 use JonasWindmann\CoreAPI\item\command\subcommand\InfoCustomItemSubCommand;
 use JonasWindmann\CoreAPI\item\command\subcommand\ExportCustomItemsSubCommand;
 use JonasWindmann\CoreAPI\item\command\subcommand\ImportCustomItemsSubCommand;
+use JonasWindmann\CoreAPI\item\command\subcommand\DebugCustomItemSubCommand;
 
 /**
  * Main command for managing custom items in CoreAPI
@@ -27,7 +28,7 @@ class CustomItemCommand extends BaseCommand
         parent::__construct(
             "customitem",
             "Manage custom items in CoreAPI",
-            "/customitem <create|give|list|remove|info|export|import> [args...]",
+            "/customitem <create|give|list|remove|info|export|import|debug> [args...]",
             ["citem", "ci"],
             "coreapi.customitem.use"
         );
@@ -40,7 +41,8 @@ class CustomItemCommand extends BaseCommand
             new RemoveCustomItemSubCommand(),
             new InfoCustomItemSubCommand(),
             new ExportCustomItemsSubCommand(),
-            new ImportCustomItemsSubCommand()
+            new ImportCustomItemsSubCommand(),
+            new DebugCustomItemSubCommand()
         ]);
     }
 }
