@@ -202,4 +202,6 @@ abstract class BaseCommand extends Command {
             $sender->sendMessage(TextFormat::GRAY . "Use " . TextFormat::YELLOW . "/" . $this->getName() . " help" . TextFormat::GRAY . " for more information.");
         }
     }
+
+
 }

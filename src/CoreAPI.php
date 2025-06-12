@@ -58,6 +58,8 @@ class CoreAPI extends PluginBase
 
         // Register custom item commands
         $this->commandManager->registerCommand(new CustomItemCommand());
+
+
     }
 
     /**

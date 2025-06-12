@@ -17,10 +17,10 @@ abstract class SubCommand {
     protected string $permission;
 
     public function __construct(
-        string $name, 
-        string $description, 
-        string $usage = "", 
-        int $minArgs = 0, 
+        string $name,
+        string $description,
+        string $usage = "",
+        int $minArgs = 0,
         int $maxArgs = 0,
         string $permission = ""
     ) {
@@ -32,7 +32,13 @@ abstract class SubCommand {
         $this->permission = $permission;
     }
 
-    public abstract function execute(CommandSender $sender, array $args): void;
+    /**
+     * Execute the subcommand
+     *
+     * @param CommandSender $sender
+     * @param array $args Raw arguments
+     */
+    abstract public function execute(CommandSender $sender, array $args): void;
 
     /**
      * @return string

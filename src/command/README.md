@@ -1,14 +1,57 @@
 # CoreAPI Command System
 
-This directory contains the command system for the CoreAPI plugin. It provides a simple and flexible way to create commands with subcommands.
+The CoreAPI Command System provides a simple and flexible framework for creating commands with subcommands and automatic help generation.
 
-**🎉 NEW**: Fluent builders for easier command creation with better error messages and automatic registration!
+## Features
 
-## Quick Start (Recommended - New Fluent API)
+- **Subcommand Support**: Organize complex commands into logical subcommands
+- **Automatic Help**: Auto-generated help commands with detailed information
+- **Permission System**: Fine-grained permission control for commands and subcommands
+- **Fluent Builder API**: Easy command creation with method chaining
+- **Error Handling**: Comprehensive error messages and suggestions
+
+## Quick Start
+
+### Creating a Simple SubCommand
+
+```php
+use JonasWindmann\CoreAPI\command\SubCommand;
+use pocketmine\command\CommandSender;
+use pocketmine\player\Player;
+
+class HelloSubCommand extends SubCommand {
+    public function __construct() {
+        parent::__construct(
+            "hello",
+            "Say hello to a player",
+            "/mycommand hello [player]",
+            0, // minimum arguments
+            1, // maximum arguments
+            "mycommand.hello" // permission
+        );
+    }
+
+    public function execute(CommandSender $sender, array $args): void {
+        if (empty($args)) {
+            $sender->sendMessage("Hello, " . $sender->getName() . "!");
+        } else {
+            $targetName = $args[0];
+            $target = $sender->getServer()->getPlayerByPrefix($targetName);
+
+            if ($target instanceof Player) {
+                $target->sendMessage("Hello from " . $sender->getName() . "!");
+                $sender->sendMessage("Said hello to " . $target->getName());
+            } else {
+                $sender->sendMessage("§cPlayer not found: " . $targetName);
+            }
+        }
+    }
+}
+```
 
 ### Creating Commands with CommandBuilder
 
-The easiest way to create commands is using the new fluent `CommandBuilder`:
+You can also use the fluent `CommandBuilder` for simpler commands:
 
 ```php
 use JonasWindmann\CoreAPI\command\CommandBuilder;
@@ -44,17 +87,7 @@ CommandBuilder::create("mycommand")
     ->build(); // Automatically registered with CoreAPI!
 ```
 
-### Benefits of the New API
-
-- **Automatic Registration**: No need to manually register commands
-- **Better Error Messages**: Users get helpful suggestions when they make mistakes
-- **Fluent Interface**: Easy to read and write
-- **Type Safety**: Less prone to errors
-- **Sensible Defaults**: Less boilerplate code
-
-## Advanced Usage (Traditional API)
-
-### Creating a Command (Traditional Way)
+## Creating a Command (Traditional Way)
 
 To create a command using the traditional approach, extend the `BaseCommand` class:
 
@@ -106,6 +139,10 @@ class MySubCommand extends SubCommand {
     public function execute(CommandSender $sender, array $args): void {
         // Implement your subcommand logic here
         $sender->sendMessage("You executed mysubcommand!");
+
+        if (!empty($args)) {
+            $sender->sendMessage("With argument: " . $args[0]);
+        }
     }
 }
 ```
@@ -113,8 +150,6 @@ class MySubCommand extends SubCommand {
 ### Automatic Help Subcommand
 
 By default, all commands that extend `BaseCommand` will have a help subcommand automatically registered. This subcommand displays a list of all available subcommands with their usage and description.
-
-The help subcommand is automatically executed when a user runs the command without any arguments, making it easier for users to discover available subcommands.
 
 #### Disabling the Automatic Help Subcommand
 
@@ -130,14 +165,6 @@ public function __construct() {
         false                         // Disable automatic help subcommand
     );
 }
-```
-
-#### Overriding the Default Help Subcommand
-
-You can also override the default help subcommand by registering your own subcommand with the name "help":
-
-```php
-$this->registerSubCommand(new MyCustomHelpSubCommand());
 ```
 
 ### Registering Commands
@@ -158,15 +185,6 @@ $commandManager->registerCommands([
 ]);
 ```
 
-### Unregistering Commands
-
-You can unregister commands using the CommandManager:
-
-```php
-// Unregister a command
-$commandManager->unregisterCommand("mycommand");
-```
-
 ## Built-in CoreAPI Commands
 
 CoreAPI includes several built-in commands for managing its features:
@@ -174,25 +192,16 @@ CoreAPI includes several built-in commands for managing its features:
 ### Scoreboard Commands
 
 - **`/coresb` (aliases: `/csb`, `/scoreboard`)** - Main scoreboard management command
-  - `/coresb list` - List all available scoreboards with details
+  - `/coresb list` - List all available scoreboards
   - `/coresb show <id>` - Display a specific scoreboard
   - `/coresb hide` - Hide your current scoreboard
   - `/coresb manage` - Open form-based management interface
-  - `/coresb info [id]` - Show detailed information about a scoreboard
 
-### Test Commands (Debug)
+### Custom Item Commands
 
-- **`/testscoreboard`** - Debug command for testing scoreboard functionality
-  - Manually trigger scoreboard updates
-  - View current scoreboard status
-  - Debug auto-update functionality
-
-### Permissions
-
-- `coreapi.scoreboard.use` - Basic scoreboard usage
-- `coreapi.scoreboard.list` - List scoreboards
-- `coreapi.scoreboard.show` - Display scoreboards
-- `coreapi.scoreboard.hide` - Hide scoreboards
-- `coreapi.scoreboard.manage` - Access form management
-- `coreapi.scoreboard.info` - View scoreboard information
-- `coreapi.admin` - Administrative commands (test commands)
+- **`/customitem` (aliases: `/citem`, `/ci`)** - Custom item management system
+  - `/customitem create <id> <name> <type> <base_item>` - Create new custom item
+  - `/customitem give <player> <id> [amount]` - Give custom item to player
+  - `/customitem list` - List all custom items
+  - `/customitem remove <id>` - Remove a custom item
+  - `/customitem info <id>` - Show detailed custom item information
