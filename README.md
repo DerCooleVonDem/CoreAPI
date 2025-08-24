@@ -84,6 +84,20 @@ The Custom Item System provides a comprehensive solution for creating and managi
 
 For more information, see the [Custom Item System Documentation](src/item/README.md).
 
+### NPC API
+
+The NPC API provides a simple and powerful way to create and manage NPCs (Non-Player Characters) in your server. It includes:
+
+- **NEW**: Easy NPC creation and management with persistent storage
+- **NEW**: Standalone NPC system with no external dependencies
+- **NEW**: Look-at-player functionality with customizable distance
+- **NEW**: Event-based interaction system for player clicks
+- Extensible base class for creating custom NPC types
+- Data storage system for NPC-specific information
+- Configuration options for NPC behavior and appearance
+
+For more information, see the [NPC API Documentation](src/npc/README.md).
+
 ## Installation
 
 1. Download the latest release from the [Releases](https://github.com/JonasWindmann/CoreAPI/releases) page
@@ -215,6 +229,41 @@ if ($customItemManager->isCustomItem($item)) {
 }
 
 // Command interface: /customitem create magic_wand "§bMagic Wand" tool minecraft:stick
+```
+
+### NPCs (New API)
+
+```php
+use JonasWindmann\CoreAPI\CoreAPI;
+use JonasWindmann\CoreAPI\npc\CoreNpc;
+use pocketmine\player\Player;
+
+// Create a custom NPC type
+class GreeterNpc extends CoreNpc {
+    protected function initNpc(): void {
+        $this->setNpcName("§aGreeter");
+        $this->lookDistance = 10.0; // Look at players up to 10 blocks away
+    }
+
+    public function onClick(Player $player): void {
+        $player->sendMessage("§aHello, " . $player->getName() . "!");
+    }
+}
+
+// Register the NPC type
+$npcManager = CoreAPI::getInstance()->getNpcManager();
+$npcManager->registerNpcType(GreeterNpc::class);
+
+// Create an NPC at a player's location
+$npc = $npcManager->createNpc("GreeterNpc", $player, [
+    "message" => "Welcome to our server!"
+]);
+
+// Remove an NPC
+$npcManager->removeNpc($npc->getId());
+
+// Get all active NPCs
+$npcs = $npcManager->getActiveNpcs();
 ```
 
 ## License

@@ -27,4 +27,6 @@ permissions:
     default: op
   coreapi.customitem.import:
     default: op
+  coreapi.npc.use:
+    default: op
 ...

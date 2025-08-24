@@ -8,6 +8,9 @@ use JonasWindmann\CoreAPI\command\CommandManager;
 use JonasWindmann\CoreAPI\form\FormManager;
 use JonasWindmann\CoreAPI\item\CustomItemManager;
 use JonasWindmann\CoreAPI\item\command\CustomItemCommand;
+use JonasWindmann\CoreAPI\npc\GreeterNpc;
+use JonasWindmann\CoreAPI\npc\NpcManager;
+use JonasWindmann\CoreAPI\npc\command\CoreNpcCommand;
 use JonasWindmann\CoreAPI\scoreboard\ScoreboardManager;
 use JonasWindmann\CoreAPI\scoreboard\command\TestScoreboardCommand;
 use JonasWindmann\CoreAPI\scoreboard\command\CoreScoreboardCommand;
@@ -37,6 +40,9 @@ class CoreAPI extends PluginBase
     /** @var CustomItemManager */
     private CustomItemManager $customItemManager;
 
+    /** @var NpcManager */
+    private NpcManager $npcManager;
+
     protected function onEnable(): void
     {
         self::setInstance($this);
@@ -45,6 +51,7 @@ class CoreAPI extends PluginBase
         $this->formManager = new FormManager($this);
         $this->scoreboardManager = new ScoreboardManager($this);
         $this->customItemManager = new CustomItemManager($this);
+        $this->npcManager = new NpcManager($this);
 
         // Register the scoreboard component factory
         $this->sessionManager->registerComponentFactory(
@@ -58,6 +65,12 @@ class CoreAPI extends PluginBase
 
         // Register custom item commands
         $this->commandManager->registerCommand(new CustomItemCommand());
+
+        // Register NPC commands
+        $this->commandManager->registerCommand(new CoreNpcCommand());
+
+        // Register default NPC types
+        $this->npcManager->registerNpcType(GreeterNpc::class);
 
 
     }
@@ -110,5 +123,15 @@ class CoreAPI extends PluginBase
     public function getCustomItemManager(): CustomItemManager
     {
         return $this->customItemManager;
+    }
+
+    /**
+     * Get the NPC manager
+     *
+     * @return NpcManager
+     */
+    public function getNpcManager(): NpcManager
+    {
+        return $this->npcManager;
     }
 }
