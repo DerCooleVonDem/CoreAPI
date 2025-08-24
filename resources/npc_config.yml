@@ -1,0 +1,18 @@
+# CoreAPI NPC Configuration
+
+# NPCs saved by the system
+npcs: []
+
+# General settings
+settings:
+  # Default look distance for NPCs (in blocks)
+  default_look_distance: 8.0
+  
+  # Whether to automatically save NPCs when they are created or removed
+  auto_save: true
+  
+  # Default skin settings (future use)
+  default_skin:
+    enabled: false
+    path: "skins/default.png"
+    geometry: "geometry.humanoid.custom"
