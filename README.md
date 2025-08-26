@@ -2,6 +2,9 @@
 
 CoreAPI: The Swiss Army tool for PocketMine plugins. CoreAPI is a utility plugin that provides a set of APIs for PocketMine-MP plugin developers. It aims to simplify common tasks and provide a consistent way to implement features across plugins.
 
+## Example Plugins
+- https://github.com/DerCooleVonDem/Calendar
+
 ## Features
 
 ### Command System
