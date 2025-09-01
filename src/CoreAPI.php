@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JonasWindmann\CoreAPI;
 
 use JonasWindmann\CoreAPI\command\CommandManager;
+use JonasWindmann\CoreAPI\event\EventManager;
 use JonasWindmann\CoreAPI\form\FormManager;
 use JonasWindmann\CoreAPI\item\CustomItemManager;
 use JonasWindmann\CoreAPI\item\command\CustomItemCommand;
@@ -43,6 +44,9 @@ class CoreAPI extends PluginBase
     /** @var NpcManager */
     private NpcManager $npcManager;
 
+    /** @var EventManager */
+    private EventManager $eventManager;
+
     protected function onEnable(): void
     {
         self::setInstance($this);
@@ -52,6 +56,7 @@ class CoreAPI extends PluginBase
         $this->scoreboardManager = new ScoreboardManager($this);
         $this->customItemManager = new CustomItemManager($this);
         $this->npcManager = new NpcManager($this);
+        $this->eventManager = new EventManager($this);
 
         // Register the scoreboard component factory
         $this->sessionManager->registerComponentFactory(
@@ -133,5 +138,15 @@ class CoreAPI extends PluginBase
     public function getNpcManager(): NpcManager
     {
         return $this->npcManager;
+    }
+
+    /**
+     * Get the event manager
+     *
+     * @return EventManager
+     */
+    public function getEventManager(): EventManager
+    {
+        return $this->eventManager;
     }
 }

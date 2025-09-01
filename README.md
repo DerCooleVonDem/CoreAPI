@@ -101,6 +101,20 @@ The NPC API provides a simple and powerful way to create and manage NPCs (Non-Pl
 
 For more information, see the [NPC API Documentation](src/npc/README.md).
 
+### Closure Event API
+
+The Closure Event API provides a lightweight and flexible event system using closures. It includes:
+
+- **NEW**: Simple event registration and triggering
+- **NEW**: Closure-based event handlers for maximum flexibility
+- **NEW**: Unique handler IDs for easy management
+- **NEW**: Results collection from all handlers
+- Namespace support to avoid conflicts between plugins
+- Easy integration with existing code
+- Minimal overhead compared to traditional event listeners
+
+For more information, see the [Closure Event API Documentation](src/event/README.md).
+
 ## Installation
 
 1. Download the latest release from the [Releases](https://github.com/JonasWindmann/CoreAPI/releases) page
@@ -267,6 +281,37 @@ $npcManager->removeNpc($npc->getId());
 
 // Get all active NPCs
 $npcs = $npcManager->getActiveNpcs();
+```
+
+### Closure Events (New API)
+
+```php
+use JonasWindmann\CoreAPI\CoreAPI;
+
+$eventManager = CoreAPI::getInstance()->getEventManager();
+
+// Register a new event
+$eventManager->registerEvent("my_plugin.player_action");
+
+// Register a handler for the event
+$handlerId = $eventManager->registerHandler("my_plugin.player_action", function($player, $action) {
+    $player->sendMessage("You performed action: $action");
+    return true;
+});
+
+// Trigger the event with parameters
+$results = $eventManager->triggerEvent("my_plugin.player_action", $player, "jump");
+
+// Check if an event has handlers
+if ($eventManager->hasHandlers("my_plugin.player_action")) {
+    // Event has at least one handler
+}
+
+// Unregister a handler when no longer needed
+$eventManager->unregisterHandler("my_plugin.player_action", $handlerId);
+
+// Unregister an event completely
+$eventManager->unregisterEvent("my_plugin.player_action");
 ```
 
 ## License
